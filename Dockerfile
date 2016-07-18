@@ -46,9 +46,6 @@ RUN useradd -m summit -s /bin/zsh && \
     echo "summit:summitpw" | chpasswd && \
     echo "summit ALL=(ALL) ALL" | tee -a /etc/sudoers
 
-RUN sudo -u summit mkdir -p /home/summit/.config && git clone https://github.com/brianmd/dotfiles.git /home/summit/.config/dotfiles && \
-    sudo -u summit git clone https://github.com/syl20bnr/spacemacs /home/summit/.emacs.d
-
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
@@ -59,6 +56,12 @@ WORKDIR /home/summit
 USER summit
 ENTRYPOINT ["/bin/zsh"]
 
+RUN mkdir -p /home/summit/.config && git clone https://github.com/brianmd/dotfiles.git /home/summit/.config/dotfiles && \
+    git clone https://github.com/syl20bnr/spacemacs /home/summit/.emacs.d
+
 RUN cd /home/summit/.config/dotfiles && \
-    make relink
+    make relink && \
+    mkdir -p /home/summit/.ssh
+
+COPY authorized_keys /home/summit/.ssh/
 
