@@ -8,24 +8,33 @@ FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y \
   autossh \
+  autotools-dev \
   build-essential \
   curl \
   direnv \
   emacs24 \
+  exim4 \
   exuberant-ctags \
   gdebi \
   git \
   golang \
+  heirloom-mailx \
   htop \
   keychain \
+  module-init-tools \
+  monit \
   mosh \
+  munin \
+  ntpdate \
   openssh-server \
   python-software-properties \
   silversearcher-ag \
   software-properties-common \
+  sysstat \
   tmux \
   tree \
   vim \
+  unzip \
   wget \
   zsh
 
@@ -40,6 +49,7 @@ RUN apt-get install -y apt-transport-https ca-certificates && \
     service docker start && \
     systemctl enable docker
  
+
 RUN useradd -m summit -s /bin/zsh && \
     usermod -aG docker summit && \
     adduser summit sudo && \
@@ -48,7 +58,6 @@ RUN useradd -m summit -s /bin/zsh && \
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
-
 
 # NOTE: commands from here on run as user summit
 
@@ -64,4 +73,6 @@ RUN cd /home/summit/.config/dotfiles && \
     mkdir -p /home/summit/.ssh
 
 COPY authorized_keys /home/summit/.ssh/
+
+RUN cd /home/summit/.config/dotfiles && git pull && echo 1
 
