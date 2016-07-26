@@ -59,9 +59,10 @@ RUN useradd -m summit -s /bin/zsh && \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-RUN ufw allow 22/tcp
-    ufw allow 80/tcp
-    ufw allow 443/tcp
+RUN ufw allow ssh
+    ufw allow 60000:60100/udp  # mosh
+    ufw allow http
+    ufw allow https
     ufw allow 32400/tcp  # plex
     ufw allow 1900/udp
     ufw allow 32469/udp
