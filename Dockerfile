@@ -59,6 +59,15 @@ RUN useradd -m summit -s /bin/zsh && \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
+RUN ufw allow 22/tcp
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    ufw allow 32400/tcp  # plex
+    ufw allow 1900/udp
+    ufw allow 32469/udp
+    ufw allow 5353/udp
+    ufw enable
+
 # NOTE: commands from here on run as user summit
 
 WORKDIR /home/summit
