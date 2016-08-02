@@ -2,7 +2,7 @@
 
 # WARNING: the summit passwd is lame.
 
-apt-get update && apt-get install -y \
+apt-get update && apt-get upgrade -y && apt-get install -y \
   autossh \
   autotools-dev \
   build-essential \
