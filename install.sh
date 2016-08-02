@@ -59,7 +59,7 @@ sudo -u summit mkdir -p /home/summit/.config
 sudo -u summit git clone https://github.com/brianmd/dotfiles.git /home/summit/.config/dotfiles
 sudo -u summit git clone https://github.com/syl20bnr/spacemacs /home/summit/.emacs.d
 
-sudo -iu summit -sh -c 'cd /home/summit/.config/dotfiles && make relink'
+sudo -iu summit sh -c 'cd /home/summit/.config/dotfiles && make relink'
 sudo -u summit mkdir -p /home/summit/.ssh
 sudo -u summit cp authorized_keys /home/summit/.ssh/
 chown summit:summit /home/summit/.ssh
