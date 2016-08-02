@@ -54,16 +54,18 @@ useradd -m summit -s /bin/zsh && \
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
+sudo -u summit mkdir -p /home/summit/.ssh
+sudo -u summit cp authorized_keys /home/summit/.ssh/
+chown -R summit:summit /home/summit/.ssh
+chmod -R 700 /home/summit/.ssh
+
 cd /home/summit
+
 sudo -u summit mkdir -p /home/summit/.config
 sudo -u summit git clone https://github.com/brianmd/dotfiles.git /home/summit/.config/dotfiles
 sudo -u summit git clone https://github.com/syl20bnr/spacemacs /home/summit/.emacs.d
 
 sudo -iu summit sh -c 'cd /home/summit/.config/dotfiles && make relink'
-sudo -u summit mkdir -p /home/summit/.ssh
-sudo -u summit cp authorized_keys /home/summit/.ssh/
-chown summit:summit /home/summit/.ssh
-chmod 700 /home/summit/.ssh
 
 # RUN cd /home/summit/.config/dotfiles && git pull && echo 1
 
