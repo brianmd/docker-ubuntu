@@ -42,8 +42,9 @@ apt-get install -y apt-transport-https ca-certificates && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y linux-image-extra-$(uname -r) && \
     apt-get install -y docker-engine && \
     service docker start && \
-    systemctl enable docker
-
+    systemctl enable docker && \
+    curl -L https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine && \
+    chmod +x /usr/local/bin/docker-machine
 
 useradd -m summit -s /bin/zsh && \
     usermod -aG docker summit && \
