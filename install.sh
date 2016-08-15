@@ -46,27 +46,37 @@ apt-get install -y apt-transport-https ca-certificates && \
     curl -L https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine && \
     chmod +x /usr/local/bin/docker-machine
 
-useradd -m summit -s /bin/zsh && \
-    usermod -aG docker summit && \
-    adduser summit sudo && \
-    echo "summit:summitpw" | chpasswd && \
-    echo "summit ALL=(ALL) ALL" | tee -a /etc/sudoers
+RUN if [[ -z $CREATE_USER ]]; then \
+  echo "creating $USERNAME" && \
+  addgroup -gid $USERID $USERNAME && \
+  adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
+fi
+
+USERNAME=summit
+USERID=64534
+addgroup -gid $USERID $USERNAME
+# adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
+useradd -m -u $USERID --gid $USERID $USERNAME -s /bin/zsh && \
+    usermod -aG docker $USERNAME && \
+    adduser $USERNAME sudo && \
+    echo "$USERNAME:${USERNAME}pw" | chpasswd && \
+    echo "$USERNAME ALL=(ALL) ALL" | tee -a /etc/sudoers
 
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-sudo -u summit mkdir -p /home/summit/.ssh
-sudo -u summit cp authorized_keys /home/summit/.ssh/
-chown -R summit:summit /home/summit/.ssh
-chmod -R 700 /home/summit/.ssh
+sudo -u $USERNAME mkdir -p /home/$USERNAME/.ssh
+sudo -u $USERNAME cp authorized_keys /home/$USERNAME/.ssh/
+chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+chmod -R 700 /home/$USERNAME/.ssh
 
-cd /home/summit
+cd /home/$USERNAME
 
-sudo -u summit mkdir -p /home/summit/.config
-sudo -u summit git clone https://github.com/brianmd/dotfiles.git /home/summit/.config/dotfiles
-sudo -u summit git clone https://github.com/syl20bnr/spacemacs /home/summit/.emacs.d
+sudo -u $USERNAME mkdir -p /home/$USERNAME/.config
+sudo -u $USERNAME git clone https://github.com/brianmd/dotfiles.git /home/$USERNAME/.config/dotfiles
+sudo -u $USERNAME git clone https://github.com/syl20bnr/spacemacs /home/$USERNAME/.emacs.d
 
-sudo -iu summit sh -c 'cd /home/summit/.config/dotfiles && make relink'
+sudo -iu $USERNAME sh -c 'cd /home/$USERNAME/.config/dotfiles && make relink'
 
-# RUN cd /home/summit/.config/dotfiles && git pull && echo 1
+# RUN cd /home/$USERNAME/.config/dotfiles && git pull && echo 1
 
