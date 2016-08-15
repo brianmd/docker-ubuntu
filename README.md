@@ -20,7 +20,8 @@ If not, should use https://github.com/brianmd/docker-ubuntu.git
 
 If going to run in docker, use something like this:
 docker run -it --rm -v /home/logindir/.ssh/git_key:/root/.ssh/git_key ubuntu /bin/bash
-$ apt-get update && apt-get install -y git
-$ export GIT_SSH_COMMAND="ssh -i ~/.ssh/git_key"
-$ export DEBIAN_FRONTEND=noninteractive
-$ mkdir -p ~/.config && cd ~/.config && git clone git@github.com:brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
+
+export GIT_SSH_COMMAND="ssh -i ~/.ssh/git_key"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update && apt-get install -y git
+mkdir -p ~/.config && cd ~/.config && git clone git@github.com:brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
