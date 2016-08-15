@@ -6,6 +6,8 @@ PW=summitpw
 USERID=64534
 GIT_KEY=git_key
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get update && apt-get upgrade -y && apt-get install -y \
   autossh \
   autotools-dev \
@@ -52,30 +54,31 @@ apt-get install -y apt-transport-https ca-certificates && \
 
 export GIT_SSH_COMMAND="ssh -i ~/.ssh/$GIT_KEY"
 export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get install -y git
 mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
 git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 (cd /root/.config/dotfiles && ./prep-user-tools.sh)
 
+apt-get clean && \
+    rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-# addgroup -gid $USERID $USERNAME
-# # adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
-# useradd -m -u $USERID --gid $USERID $USERNAME -s /bin/zsh && \
-#     usermod -aG docker $USERNAME && \
-#     adduser $USERNAME sudo && \
-#     echo "$USERNAME:${PW}" | chpasswd && \
-#     echo "$USERNAME ALL=(ALL) ALL" | tee -a /etc/sudoers
+mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
 
-# apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-# sudo -u $USERNAME mkdir -p /home/$USERNAME/.ssh
-# sudo -u $USERNAME cp authorized_keys /home/$USERNAME/.ssh/
-# if [[ -f ~/.ssh/$GIT_KEY ]]; then
-#   cp ~/.ssh/$GIT_KEY /home/$USERNAME/.ssh/
-# fi
-# chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
-# chmod -R 700 /home/$USERNAME/.ssh
+addgroup -gid $USERID $USERNAME
+# adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
+useradd -m -u $USERID --gid $USERID $USERNAME -s /bin/zsh && \
+    usermod -aG docker $USERNAME && \
+    adduser $USERNAME sudo && \
+    echo "$USERNAME:${PW}" | chpasswd && \
+    echo "$USERNAME ALL=(ALL) ALL" | tee -a /etc/sudoers
+
+sudo -u $USERNAME mkdir -p /home/$USERNAME/.ssh
+sudo -u $USERNAME cp authorized_keys /home/$USERNAME/.ssh/
+if [[ -f ~/.ssh/$GIT_KEY ]]; then
+  cp ~/.ssh/$GIT_KEY /home/$USERNAME/.ssh/
+fi
+chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+chmod -R 700 /home/$USERNAME/.ssh
 
 # cd /home/$USERNAME
 
@@ -86,4 +89,6 @@ git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 # # sudo -iu $USERNAME sh -c 'cd /home/$USERNAME/.config/dotfiles && make relink'
 
 # # RUN cd /home/$USERNAME/.config/dotfiles && git pull && echo 1
+
+sudo -u $USERNAME -c "mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh"
 
