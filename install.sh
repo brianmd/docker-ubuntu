@@ -46,11 +46,6 @@ apt-get install -y apt-transport-https ca-certificates && \
     curl -L https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine && \
     chmod +x /usr/local/bin/docker-machine
 
-RUN if [[ -z $CREATE_USER ]]; then \
-  echo "creating $USERNAME" && \
-  addgroup -gid $USERID $USERNAME && \
-  adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
-fi
 
 USERNAME=summit
 USERID=64534
