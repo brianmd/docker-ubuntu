@@ -54,14 +54,14 @@ apt-get install -y apt-transport-https ca-certificates && \
 
 export GIT_SSH_COMMAND="ssh -i ~/.ssh/$GIT_KEY"
 export DEBIAN_FRONTEND=noninteractive
-mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
+(mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh)
 git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 (cd /root/.config/dotfiles && ./prep-user-tools.sh)
 
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh
+# (mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh)
 
 
 addgroup -gid $USERID $USERNAME
@@ -73,7 +73,9 @@ useradd -m -u $USERID --gid $USERID $USERNAME -s /bin/zsh && \
     echo "$USERNAME ALL=(ALL) ALL" | tee -a /etc/sudoers
 
 sudo -u $USERNAME mkdir -p /home/$USERNAME/.ssh
-sudo -u $USERNAME cp authorized_keys /home/$USERNAME/.ssh/
+if [[ -f authorized_keys ]]; then
+  sudo -u $USERNAME cp authorized_keys /home/$USERNAME/.ssh/
+fi
 if [[ -f ~/.ssh/$GIT_KEY ]]; then
   cp ~/.ssh/$GIT_KEY /home/$USERNAME/.ssh/
 fi
@@ -90,5 +92,5 @@ chmod -R 700 /home/$USERNAME/.ssh
 
 # # RUN cd /home/$USERNAME/.config/dotfiles && git pull && echo 1
 
-sudo -u $USERNAME -c "mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh"
+sudo -u $USERNAME -i -- sh -lc '(mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/dotfiles.git && cd dotfiles && ./prep-user-tools.sh)'
 
