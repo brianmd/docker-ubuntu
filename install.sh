@@ -61,8 +61,6 @@ git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
-# (mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh)
-
 
 addgroup -gid $USERID $USERNAME
 # adduser --disabled-password --gecos '' -u $USERID --gid $USERID $USERNAME ;\
@@ -94,3 +92,8 @@ chmod -R 700 /home/$USERNAME/.ssh
 
 sudo -u $USERNAME -i -- sh -lc '(mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/dotfiles.git && cd dotfiles && ./prep-user-tools.sh)'
 
+# These are saved to the end because they require user input, and this may be unattended.
+vim +PlugInstall
+sudo -u $USERNAME vim +PlugInstall
+
+echo "You may need to run 'vim +PlugInstall both as root and as $USERNAME'"
