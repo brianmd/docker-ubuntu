@@ -36,6 +36,7 @@ apt-get update && apt-get upgrade -y && apt-get install -y \
   tmux \
   tree \
   vim \
+  ufw \
   unzip \
   wget \
   zsh
@@ -57,6 +58,10 @@ export DEBIAN_FRONTEND=noninteractive
 (mkdir -p ~/.config && cd ~/.config && git clone https://github.com/brianmd/docker-ubuntu.git && cd docker-ubuntu && ./install.sh)
 git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 (cd /root/.config/dotfiles && ./prep-user-tools.sh)
+
+ufw allow ssh && \
+    ufw allow most && \
+    ufw enable
 
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
