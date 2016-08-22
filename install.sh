@@ -60,7 +60,7 @@ git clone https://github.com/brianmd/dotfiles.git /root/.config/dotfiles
 (cd /root/.config/dotfiles && ./prep-user-tools.sh)
 
 ufw allow ssh && \
-    ufw allow most && \
+    ufw allow mosh && \
     ufw enable
 
 apt-get clean && \
