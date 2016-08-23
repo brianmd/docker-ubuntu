@@ -74,6 +74,10 @@ ufw allow ssh && \
 gcloud components install kubectl
 gcloud components install app-engine-java
 
+# Kubernetes installation is going to be tricky -- this merely serves as a starting point.
+# For more info, see http://kubernetes.io/docs/getting-started-guides/ubuntu/
+(mkdir -p ~/Downloads && cd ~/Downloads && git clone --depth 1 https://github.com/kubernetes/kubernetes.git)
+
 apt-get clean && \
     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
 
