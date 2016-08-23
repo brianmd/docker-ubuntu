@@ -113,3 +113,5 @@ sudo -u $USERNAME vim +PlugInstall
 
 echo "You may need to run 'vim +PlugInstall both as root and as $USERNAME'"
 echo "You may also need to run 'gcloud init'"
+echo "After which this will install kubernetes: 'curl -sS https://get.k8s.io | bash'"
+echo "        Note: this works for google cloud"
