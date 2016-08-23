@@ -17,6 +17,7 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 apt-get update && apt-get upgrade -y && apt-get install -y \
   autossh \
   autotools-dev \
+  bridge-utils \
   build-essential \
   curl \
   direnv \
