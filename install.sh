@@ -30,6 +30,8 @@ apt-get update && apt-get upgrade -y && apt-get install -y \
   google-cloud-sdk \
   heirloom-mailx \
   htop \
+  httpie \
+  jq \
   keychain \
   module-init-tools \
   monit \

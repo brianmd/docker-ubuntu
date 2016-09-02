@@ -1,10 +1,13 @@
 FROM ubuntu:16.04
 
-# WARNING: the summit passwd is lame.
+# WARNING: passwd is lame.
 
-# Docker documentation recommends against upgrading. If needed, request image maintainers to update
-# RUN apt-get update && \
-#     apt-get upgrade -y
+ENV USERNAME clojure
+ENV PW summitpw
+ENV USERID 64534
+ENV GIT_KEY git_key
+
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y \
   autossh \
@@ -20,6 +23,8 @@ RUN apt-get update && apt-get install -y \
   golang \
   heirloom-mailx \
   htop \
+  httpie \
+  jq \
   keychain \
   module-init-tools \
   monit \
@@ -34,9 +39,22 @@ RUN apt-get update && apt-get install -y \
   tmux \
   tree \
   vim \
+  ufw \
   unzip \
   wget \
   zsh
+
+RUN echo "install gcloud"
+# Create an environment variable for the correct distribution
+ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
+# Add the Cloud SDK distribution URI as a package source
+RUN echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+
+
+# Import the Google Cloud public key
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+RUN apt-get update && install -y \
+  google-cloud-sdk
 
 # Install docker
 RUN apt-get install -y apt-transport-https ca-certificates && \
@@ -85,4 +103,6 @@ RUN cd /home/summit/.config/dotfiles && \
 COPY authorized_keys /home/summit/.ssh/
 
 RUN cd /home/summit/.config/dotfiles && git pull && echo 1
+
+CMD ["zsh"]
 
