@@ -44,17 +44,26 @@ RUN apt-get update && apt-get install -y \
   wget \
   zsh
 
-RUN echo "install gcloud"
-# Create an environment variable for the correct distribution
-ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
-# Add the Cloud SDK distribution URI as a package source
-RUN echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-
-
 # Import the Google Cloud public key
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-RUN apt-get update && install -y \
-  google-cloud-sdk
+
+RUN echo "install gcloud."
+# Create an environment variable for the correct distribution
+# ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
+# RUN echo "CLOUD_SDK_REPO => $CLOUD_SDK_REPO"
+# Add the Cloud SDK distribution URI as a package source
+RUN apt-get install --reinstall base-files lsb-release lsb-base
+RUN echo "cloud-sdk-`lsb_release -c -s` main"
+RUN echo "cloud-sdk-$(lsb_release -c -s) main"
+RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-`lsb_release -c -s` main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN ls -l /etc/apt/sources.list.d
+RUN cat /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN apt-get update
+RUN apt-get install -y google-cloud-sdk
+RUN ls -l /etc/apt/sources.list.d
+
+RUN apt-get update
+RUN apt-get install -y google-cloud-sdk
 
 # Install docker
 RUN apt-get install -y apt-transport-https ca-certificates && \
