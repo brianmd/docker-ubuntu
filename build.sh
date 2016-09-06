@@ -1,1 +1,1 @@
-docker build -t bach/ubuntu .
+docker build -t bach/toolbox -f Dockerfile.toolbox .

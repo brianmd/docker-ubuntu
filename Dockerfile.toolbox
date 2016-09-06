@@ -1,11 +1,11 @@
 FROM ubuntu:16.04
 
-# WARNING: passwd is lame.
 
-ENV USERNAME clojurepw
-ENV PW clojure
-ENV USERID 64534
-ENV GIT_KEY git_key
+#####   look at dbus-x11
+
+
+
+# WARNING: pw is lame.
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -18,12 +18,14 @@ RUN apt-get update && apt-get install -y \
   emacs24 \
   exim4 \
   exuberant-ctags \
+  fish \
   gdebi \
   git \
   golang \
   heirloom-mailx \
   htop \
   httpie \
+  ispell \
   jq \
   keychain \
   module-init-tools \
@@ -45,41 +47,37 @@ RUN apt-get update && apt-get install -y \
   zsh
 
 
-# RUN echo "install gcloud."
-# RUN echo 1
-# # Import the Google Cloud public key
-# RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-# # Create an environment variable for the correct distribution
-# # ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
-# # RUN echo "CLOUD_SDK_REPO => $CLOUD_SDK_REPO"
-# # Add the Cloud SDK distribution URI as a package source
-# RUN apt-get install --reinstall base-files lsb-release lsb-base
-# RUN echo "cloud-sdk-`lsb_release -c -s` main"
-# RUN echo "cloud-sdk-$(lsb_release -c -s) main"
-# RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-`lsb_release -c -s` main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-# RUN ls -l /etc/apt/sources.list.d
-# RUN cat /etc/apt/sources.list.d/google-cloud-sdk.list
-# RUN apt-get update
-# RUN apt-get install -y google-cloud-sdk
-# RUN ls -l /etc/apt/sources.list.d
+# Import the Google Cloud public key
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+# Create an environment variable for the correct distribution
+ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
+RUN echo "CLOUD_SDK_REPO => $CLOUD_SDK_REPO"
+# Add the Cloud SDK distribution URI as a package source
+RUN apt-get install --reinstall base-files lsb-release lsb-base
+RUN echo "cloud-sdk-`lsb_release -c -s` main"
+RUN echo "cloud-sdk-$(lsb_release -c -s) main"
+RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-`lsb_release -c -s` main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN ls -l /etc/apt/sources.list.d
+RUN cat /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN apt-get update && apt-get install -y google-cloud-sdk
+RUN ls -l /etc/apt/sources.list.d
 
-# # Install docker
-# RUN apt-get install -y apt-transport-https ca-certificates && \
-#     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D && \
-#     add-apt-repository "deb https://apt.dockerproject.org/repo ubuntu-$(lsb_release -s -c) main" && \
-#     apt-get update && \
-#     apt-cache policy docker-engine && \
-#     DEBIAN_FRONTEND=noninteractive apt-get install -y linux-image-extra-$(uname -r) && \
-#     apt-get install -y docker-engine && \
-#     service docker start && \
-#     systemctl enable docker
+ENV UNAME clojure
+ENV PW clojurepw
+# ENV USERID 64534
+# ENV GIT_KEY git_key
 
-
-# RUN useradd -m clojure -s /bin/zsh && \
-#     usermod -aG docker clojure && \
-#     adduser clojure sudo && \
-#     echo "clojure:clojure" | chpasswd && \
-#     echo "clojure ALL=(ALL) ALL" | tee -a /etc/sudoers
+RUN mkdir -p /home/$UNAME
+# VOLUME /home/$UNAME
+RUN groupadd -g 500 $UNAME && \
+    useradd $UNAME -d /home/$UNAME -u 500 -g 500 -p $PW -s /bin/zsh && \
+    chown -R $UNAME:$UNAME /home/$UNAME && \
+    # groupadd docker && \
+    # groupadd docker && \
+    # usermod -aG docker $UNAME && \
+    adduser $UNAME sudo && \
+    echo "$UNAME:$UNAME" | chpasswd && \
+    echo "$UNAME ALL=(ALL) ALL" | tee -a /etc/sudoers
 
 # RUN apt-get clean && \
 #     rm -rf /var/lib/apt/lists/*/tmp/* /var/tmp/*
@@ -94,22 +92,31 @@ RUN apt-get update && apt-get install -y \
 #     ufw allow 5353/udp
 #     ufw enable
 
-# # NOTE: commands from here on run as user clojure
+# # NOTE: commands from here on run as user $UNAME
 
-# WORKDIR /home/clojure
-# USER clojure
-# ENTRYPOINT ["/bin/zsh"]
+USER $UNAME
 
-# RUN mkdir -p /home/clojure/.config && git clone https://github.com/brianmd/dotfiles.git /home/clojure/.config/dotfiles && \
-#     git clone https://github.com/syl20bnr/spacemacs /home/clojure/.emacs.d
+# RUN pwd
+# RUN ls -la /home/$UNAME
+# RUN whoami
+# RUN ls -la /home
+# RUN ls -la /home/clojure
 
-# RUN cd /home/clojure/.config/dotfiles && \
-#     make relink && \
-#     mkdir -p /home/clojure/.ssh
+RUN mkdir -p /home/$UNAME/.config && \
+    git clone https://github.com/brianmd/dotfiles.git /home/$UNAME/.config/dotfiles && \
+    git clone https://github.com/syl20bnr/spacemacs /home/$UNAME/.emacs.d
 
-# COPY authorized_keys /home/clojure/.ssh/
+WORKDIR /home/$UNAME/.config/dotfiles
+RUN make relink && \
+    mkdir -p /home/$UNAME/.ssh
 
-# RUN cd /home/clojure/.config/dotfiles && git pull && echo 1
+RUN emacs -nw -batch -u "$UNAME" -q -kill && \
+    emacs -nw -batch -u "$UNAME" -q -kill && \
+    sed -i "s/dotspacemacs-install-packages 'all/dotspacemacs-install-packages 'used-but-keep-unused/g" $HOME/.spacemacs && \
+    emacs -nw -batch -u "$UNAME" -q -kill
 
-# CMD ["zsh"]
+#RUN cd /home/$UNAME/.config/dotfiles && git pull && echo 1
+
+WORKDIR /home/$UNAME/code
+CMD ["zsh"]
 
